@@ -124,10 +124,34 @@ workspace-root/
 
 ## Installation
 
-Copy the `.cursor/skills/` folder from this repo into your project or workspace. Cursor will automatically detect and make the skills available to the agent.
+### Option 1 — `npx skills` (recommended)
+
+Install using the [open agent skills CLI](https://github.com/vercel-labs/skills):
+
+**Install to the current project** (committed with your repo, shared with your team):
 
 ```bash
+npx skills add nsantini/gsdl -a cursor
+```
+
+**Install globally** (available across all your projects):
+
+```bash
+npx skills add nsantini/gsdl -a cursor -g
+```
+
+Both commands target Cursor via the `-a cursor` flag. Cursor will automatically detect the skills and make them available to the agent.
+
+### Option 2 — Manual copy
+
+Copy the `.cursor/skills/` folder into your project or `~/.cursor/skills/` for a global install:
+
+```bash
+# Project-level
 cp -r .cursor/skills/ /path/to/your/project/.cursor/skills/
+
+# Global
+cp -r .cursor/skills/ ~/.cursor/skills/
 ```
 
 ---
