@@ -39,15 +39,25 @@ Announce which phase you're starting from and why before proceeding.
 
 ## Step 2: Run Each Phase
 
+## Skill Path Resolution
+
+When reading a sub-skill, resolve its path using this priority order:
+1. `~/.agents/skills/[skill-name]/SKILL.md` — installed via npx (preferred)
+2. `~/.cursor/skills/[skill-name]/SKILL.md` — legacy/manual install
+
+Use whichever path exists. If both exist, prefer `~/.agents/skills/`.
+
+---
+
 ### Phase 0 — Project Setup (Inline)
 
-Read and follow `~/.cursor/skills/gsdl-setup-project/SKILL.md`.
+Read and follow the `gsdl-setup-project` skill (resolve path per above).
 
 Complete the full setup (folder, `tasks/`, `seed.md`), then show the checkpoint and wait for user confirmation before continuing to Phase 1.
 
 ### Phase 1 — Create PRD (Inline)
 
-Read and follow `~/.cursor/skills/gsdl-create-prd/SKILL.md`.
+Read and follow the `gsdl-create-prd` skill (resolve path per above).
 
 This phase is interactive — ask clarifying questions, iterate on the PRD with the user, then save it to `.planning/[project-name]/tasks/prd-[feature-name].md`.
 
@@ -55,7 +65,7 @@ Show the checkpoint and wait for confirmation before Phase 2. **Before proceedin
 
 ### Phase 2 — Generate Task List (Inline)
 
-Read and follow `~/.cursor/skills/gsdl-create-plan/SKILL.md`.
+Read and follow the `gsdl-create-plan` skill (resolve path per above).
 
 This has two steps: show parent tasks → wait for user "Go" → generate sub-tasks and save to `.planning/[project-name]/tasks/tasks-prd-[name].md`.
 
@@ -71,7 +81,7 @@ For each parent task, in order:
 2. Spawn a `generalPurpose` subagent using the Task tool with this prompt (fill in all `[placeholders]`):
 
 ```
-Read and follow the skill at: ~/.cursor/skills/gsdl-execute-plan/SKILL.md
+Read and follow the skill at: ~/.agents/skills/gsdl-execute-plan/SKILL.md (if it exists, otherwise ~/.cursor/skills/gsdl-execute-plan/SKILL.md)
 
 You are running in BATCH MODE. Complete ALL sub-tasks under the assigned parent task
 without pausing for user approval between sub-tasks. Apply the full completion protocol
