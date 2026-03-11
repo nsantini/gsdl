@@ -1,6 +1,7 @@
 ---
 name: gsdl-setup-project
 description: Set up new project structure with tasks directory and seed file for research workspace. Use when the user wants to start a new project, create a project structure, initialize a new idea, or mentions starting something new.
+disable-model-invocation: true
 ---
 
 # Setup Project

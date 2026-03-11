@@ -1,6 +1,0 @@
----
-description: GSD Install — Create .cursor/rules/ files that enable GSDL slash commands (/gsdl, /gsdl-create-prd, etc.) in this project.
-alwaysApply: false
----
-
-Read the skill file at `.cursor/skills/gsdl-install/SKILL.md` using the Read tool, then follow all instructions within it.

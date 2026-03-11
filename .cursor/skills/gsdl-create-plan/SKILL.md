@@ -1,6 +1,7 @@
 ---
 name: gsdl-create-plan
 description: Generate a detailed implementation plan (task list) from a Product Requirements Document (PRD). Use when the user wants to break down a PRD into implementation tasks, create a plan from requirements, generate tasks from a PRD, or asks to "create a plan".
+disable-model-invocation: true
 ---
 
 # Generate Task List from PRD

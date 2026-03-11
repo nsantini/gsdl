@@ -1,6 +1,7 @@
 ---
 name: gsdl-create-prd
 description: Generate a Product Requirements Document (PRD) from a seed file or user input. Use when the user wants to create a PRD, document requirements, formalize a feature spec, or turn an idea into a structured requirements document.
+disable-model-invocation: true
 ---
 
 # Create PRD
