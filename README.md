@@ -131,14 +131,16 @@ Install using the [open agent skills CLI](https://github.com/vercel-labs/skills)
 **Install to the current project** (committed with your repo, shared with your team):
 
 ```bash
-npx skills add nsantini/gsdl -a cursor
+npx skills@1.4.0 add nsantini/gsdl -a cursor
 ```
 
 **Install globally** (available across all your projects):
 
 ```bash
-npx skills add nsantini/gsdl -a cursor -g
+npx skills@1.4.0 add nsantini/gsdl -a cursor -g
 ```
+
+nb: using `skills@1.4.0` until bug causing not to properly symlic to cursor is fixed
 
 Both commands target Cursor via the `-a cursor` flag. Cursor will automatically detect the skills and make them available to the agent.
 
