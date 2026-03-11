@@ -19,9 +19,11 @@ If the project structure doesn't exist, create it first following the project-se
 
 ## Process
 
-### Step 1: Read the Seed File
+### Step 1: Read the Seed File from Disk
 
-Start by reading `.planning/[project-name]/seed.md` to understand:
+Read `.planning/[project-name]/seed.md` **directly from disk** — do **not** rely on any in-context version. The user may have edited the file after the project setup phase. Always use the on-disk content as the source of truth.
+
+Use the file to understand:
 - The initial problem or opportunity
 - Rough feature ideas or concepts
 - Inspiration or reference links

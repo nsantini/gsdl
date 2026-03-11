@@ -31,18 +31,20 @@ This skill follows a **two-phase workflow** to ensure alignment before diving in
 ### Phase 1: Generate Parent Tasks
 
 1. **Receive PRD Reference**: The user points to a specific PRD file
-2. **Analyze PRD**: Read and analyze the functional requirements, user stories, and other sections
-3. **Create Parent Tasks**: Generate 5-7 high-level tasks required to implement the feature
-4. **Present to User**: Show the parent tasks in the specified format (without sub-tasks yet)
-5. **Pause for Confirmation**: Inform the user: "I have generated the high-level tasks based on the PRD. Ready to generate the sub-tasks? Respond with 'Go' to proceed."
+2. **Read PRD from disk**: Read the PRD file directly from disk at its path — do **not** rely on any in-context version. The user may have edited the file since it was generated.
+3. **Analyze PRD**: Analyze the functional requirements, user stories, and other sections from the file just read
+4. **Create Parent Tasks**: Generate 5-7 high-level tasks required to implement the feature
+5. **Present to User**: Show the parent tasks in the specified format (without sub-tasks yet)
+6. **Pause for Confirmation**: Inform the user: "I have generated the high-level tasks based on the PRD. Review the tasks above — feel free to edit the PRD or suggest changes before we continue. Respond with 'Go' to generate the sub-tasks."
 
 ### Phase 2: Generate Sub-Tasks
 
 1. **Wait for "Go"**: Only proceed after the user confirms with "Go"
-2. **Break Down Tasks**: For each parent task, create smaller, actionable sub-tasks
-3. **Identify Files**: List potential files that will need to be created or modified
-4. **Generate Final Output**: Combine everything into the complete task list structure
-5. **Save Task List**: Save to the project's tasks directory
+2. **Re-read PRD from disk**: Before generating sub-tasks, read the PRD file from disk again to pick up any edits the user may have made since Phase 1
+3. **Break Down Tasks**: For each parent task, create smaller, actionable sub-tasks based on the current PRD content
+4. **Identify Files**: List potential files that will need to be created or modified
+5. **Generate Final Output**: Combine everything into the complete task list structure
+6. **Save Task List**: Save to the project's tasks directory
 
 ## Task List Structure
 

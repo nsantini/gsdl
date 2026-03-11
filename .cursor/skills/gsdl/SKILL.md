@@ -49,17 +49,21 @@ Complete the full setup (folder, `tasks/`, `seed.md`), then show the checkpoint 
 
 Read and follow `~/.cursor/skills/gsdl-create-prd/SKILL.md`.
 
-This phase is interactive — ask clarifying questions, iterate on the PRD with the user, then save it to `.planning/[project-name]/tasks/prd-[feature-name].md`. Show the checkpoint and wait for confirmation before Phase 2.
+This phase is interactive — ask clarifying questions, iterate on the PRD with the user, then save it to `.planning/[project-name]/tasks/prd-[feature-name].md`.
+
+Show the checkpoint and wait for confirmation before Phase 2. **Before proceeding to Phase 2, re-read the PRD from disk** at its saved path — the user may have edited the file after reviewing it.
 
 ### Phase 2 — Generate Task List (Inline)
 
 Read and follow `~/.cursor/skills/gsdl-create-plan/SKILL.md`.
 
-This has two steps: show parent tasks → wait for user "Go" → generate sub-tasks and save to `.planning/[project-name]/tasks/tasks-prd-[name].md`. Show the checkpoint and wait for confirmation before Phase 3.
+This has two steps: show parent tasks → wait for user "Go" → generate sub-tasks and save to `.planning/[project-name]/tasks/tasks-prd-[name].md`.
+
+Show the checkpoint and wait for confirmation before Phase 3. **Before proceeding to Phase 3, re-read the task file from disk** at its saved path — the user may have edited the file (reordering, rewording, or adding tasks) after reviewing it.
 
 ### Phase 3 — Implementation (Subagent per Parent Task)
 
-Read the task file to identify all parent tasks (1.0, 2.0, 3.0, ...).
+**Re-read the task file from disk** to identify all parent tasks (1.0, 2.0, 3.0, ...). Use the on-disk version as the source of truth, not any prior in-context copy.
 
 For each parent task, in order:
 
@@ -101,11 +105,13 @@ Show this between every phase transition and between every parent task in Phase 
 What was done: [1–3 sentence summary]
 Files touched: [key files created or modified]
 
+👉 Review the output file before continuing — you can edit it directly and your changes will be picked up automatically.
+
 Ready to continue to [next phase / Task N+1.0]?
-Type "yes" / "go" / "next" to continue, or tell me what to review first.
+Type "yes" / "go" / "next" to continue, or tell me what to review or change first.
 ```
 
-**Never proceed past a checkpoint without user confirmation.**
+**Never proceed past a checkpoint without user confirmation. Always re-read the relevant artifact from disk after the user confirms, to pick up any edits they made during the review window.**
 
 ---
 

@@ -32,6 +32,8 @@ Phase 3: Implement   → one subagent per parent task, with checkpoint between e
 
 A checkpoint is shown between every phase and between every parent task during implementation. The pipeline never auto-advances past a checkpoint without your confirmation.
 
+At each checkpoint, you can **edit the artifact directly** (the PRD, task list, etc.) before confirming. The next phase always re-reads from disk, so your edits are automatically picked up.
+
 ---
 
 ### `gsdl-setup-project` — Project Setup
@@ -66,7 +68,7 @@ The PRD covers: goals, user stories, functional requirements, non-goals, design/
 
 ### `gsdl-create-plan` — Generate Task List
 
-Breaks down a PRD into a hierarchical, checkbox-tracked task list. Uses a two-phase process: shows parent tasks first, waits for your "Go", then generates detailed sub-tasks.
+Breaks down a PRD into a hierarchical, checkbox-tracked task list. Uses a two-phase process: shows parent tasks first, waits for your "Go", then generates detailed sub-tasks. The PRD is re-read from disk before each phase, so any edits you make between steps are picked up.
 
 **Trigger phrases:** "create a plan", "generate tasks from the PRD", "break this down into tasks"
 
@@ -87,7 +89,7 @@ Also includes a `Relevant Files` section listing every file expected to be creat
 
 ### `gsdl-execute-plan` — Execute Plan
 
-Works through a task list one sub-task at a time. Marks tasks complete as it goes, commits to git when a parent task finishes, and pauses for your approval before moving to the next sub-task.
+Works through a task list one sub-task at a time. Marks tasks complete as it goes, commits to git when a parent task finishes, and pauses for your approval before moving to the next sub-task. The task list is always read from disk at the start, so any manual edits you made before execution are respected.
 
 **Trigger phrases:** "execute the plan", "start implementing", "work through the tasks"
 

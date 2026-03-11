@@ -105,9 +105,10 @@ The "Relevant Files" section should be kept up to date:
 
 ### Before Starting Work
 
-1. **Read the task list**: Identify which sub-task comes next
-2. **Check for dependencies**: Ensure previous tasks are completed
-3. **Understand the goal**: Make sure you understand what the sub-task requires
+1. **Read the task list from disk**: Read the task file directly from its path on disk — do **not** rely on any in-context version. The user may have edited the file (added tasks, reworded sub-tasks, reordered items) since the plan was generated. Always use the on-disk state as the source of truth.
+2. **Identify the next sub-task**: Find the first unchecked `[ ]` sub-task
+3. **Check for dependencies**: Ensure previous tasks are completed
+4. **Understand the goal**: Make sure you understand what the sub-task requires
 
 ### During Implementation
 
