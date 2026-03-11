@@ -1,0 +1,6 @@
+---
+description: GSD PRD — Generate a Product Requirements Document from a seed file or user input.
+alwaysApply: false
+---
+
+Read the skill file at `.cursor/skills/gsdl-create-prd/SKILL.md` using the Read tool, then follow all instructions within it.

@@ -1,0 +1,6 @@
+---
+description: GSD — Run the full project pipeline from idea to implementation (setup → PRD → task list → implement). Use when building something end-to-end.
+alwaysApply: false
+---
+
+Read the skill file at `.cursor/skills/gsdl/SKILL.md` using the Read tool, then follow all instructions within it.
