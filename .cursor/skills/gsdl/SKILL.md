@@ -1,6 +1,6 @@
 ---
 name: gsdl
-description: "Get Shit Done (GSD) orchestrator. Runs the full project pipeline from idea to implementation: setup → PRD → task list → implementation. Use when the user wants to build something end-to-end, says \"let's GSD\", \"build this from scratch\", \"get shit done\", or wants to run the full development workflow. Coordinates gsdl-setup-project, gsdl-create-prd, gsdl-create-plan, and gsdl-execute-plan skills. Spawns subagents per parent task during implementation to preserve context. Accepts an optional project name argument: /gsdl [project-name]."
+description: "Get Shit Done (GSD) orchestrator. Runs the full project pipeline from idea to implementation: setup → PRD → task list → implementation. Use when the user wants to build something end-to-end, says \"let's GSD\", \"build this from scratch\", \"get shit done\", or wants to run the full development workflow. Coordinates gsdl-setup-project, gsdl-create-prd, gsdl-create-plan, and gsdl-execute-plan skills. Spawns subagents per parent task during implementation to preserve context. Accepts an optional project name or source URL: /gsdl [project-name] OR /gsdl [linear|notion|slite] [url] OR /gsdl [url]."
 disable-model-invocation: true
 ---
 
@@ -19,11 +19,41 @@ Phase 3: Implement   → gsdl-execute-plan SKILL.md  (subagent per parent task)
 
 ---
 
+## Step 0: Detect Source URL (Pre-flight)
+
+**Before resolving the project name**, check if the user's message contains a URL argument.
+
+Recognized patterns:
+- `/gsdl linear https://linear.app/...`
+- `/gsdl notion https://notion.so/...`
+- `/gsdl slite https://slite.com/...`
+- `/gsdl https://linear.app/...` (source auto-detected from URL)
+- `/gsdl https://notion.so/...`
+- `/gsdl https://notion.site/...`
+- `/gsdl https://slite.com/...`
+
+**If a URL is detected:**
+
+1. Read and follow the `gsdl-fetch-source` skill (resolve path per the Skill Path Resolution section below).
+2. Pass the URL and optional source-type hint to the skill.
+3. The skill returns:
+   - A **suggested project name** (kebab-case, derived from the fetched title)
+   - **Seed content** (pre-formatted Markdown for `seed.md`)
+   - A **source summary** (one-line description of what was fetched)
+4. Present the suggested project name to the user and confirm: *"I fetched the content from [source summary]. I'll use `[suggested-name]` as the project name — does that work, or would you like a different name?"*
+5. Once confirmed (or adjusted), store both the project name and seed content in context.
+6. Proceed to **Step 2: Detect Current Phase** — the seed content will be written to `seed.md` during Phase 0 setup (overriding the normal "describe your idea" prompt).
+
+**If no URL is detected**, skip this step entirely and proceed to Step 1.
+
+---
+
 ## Step 1: Resolve Project Name
 
 1. **Check the user's message for a project name argument.** If the user typed `/gsdl my-project`, the project name is `my-project`. Use it directly — do not ask.
-2. If no project name was provided, ask: "What's the project name?"
-3. Normalize to kebab-case.
+2. If a source URL was provided in Step 0, the project name was already resolved there — use it.
+3. If no project name was provided and no URL was given, ask: "What's the project name?"
+4. Normalize to kebab-case.
 
 ---
 
@@ -66,13 +96,25 @@ When reading a sub-skill, resolve its path using this priority order:
 
 Use whichever path exists. If both exist, prefer `~/.agents/skills/`.
 
+Sub-skills used by this orchestrator:
+- `gsdl-fetch-source` — fetches content from Linear, Notion, or Slite (Step 0)
+- `gsdl-setup-project` — creates folder structure and seed.md (Phase 0)
+- `gsdl-create-prd` — generates the PRD (Phase 1)
+- `gsdl-create-plan` — generates the task list (Phase 2)
+- `gsdl-execute-plan` — implements sub-tasks (Phase 3)
+
 ---
 
 ### Phase 0 — Project Setup (Inline)
 
 Read and follow the `gsdl-setup-project` skill (resolve path per above).
 
-Complete the full setup (folder, `tasks/`, `seed.md`), then write the initial `progress.md` (phase 0), show the checkpoint, and wait for user confirmation before continuing to Phase 1.
+Complete the full setup (folder, `tasks/`, `seed.md`):
+
+- **If seed content was pre-fetched in Step 0**: Write the fetched seed content directly to `seed.md` instead of asking the user to describe their idea. Show the user what was written and let them know they can edit `seed.md` before continuing.
+- **If no pre-fetched content**: Follow the normal `gsdl-setup-project` flow (prompt the user to describe their idea, populate `seed.md` collaboratively).
+
+Then write the initial `progress.md` (phase 0), show the checkpoint, and wait for user confirmation before continuing to Phase 1.
 
 ### Phase 1 — Create PRD (Inline)
 

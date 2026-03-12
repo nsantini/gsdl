@@ -25,6 +25,14 @@ Runs the entire workflow end-to-end. Detects which phase a project is at and res
 **Pass a project name directly to resume instantly:**
 > `/gsdl my-project` — picks up where you left off, no questions asked
 
+**Start from a Linear ticket, Notion doc, or Slite doc:**
+> `/gsdl linear https://linear.app/team/issue/ISSUE-123/issue-title`
+> `/gsdl notion https://www.notion.so/workspace/Page-Title-abc123`
+> `/gsdl slite https://yourteam.slite.com/p/NOTE_ID/Doc-Title`
+> `/gsdl https://linear.app/...` — source is auto-detected from the URL
+
+When a URL is provided, the orchestrator fetches the ticket or document content, pre-populates `seed.md` automatically, and proceeds into the pipeline — no manual idea description required.
+
 **Pipeline:**
 ```
 Phase 0: Setup       → creates project folder and seed file
@@ -38,6 +46,38 @@ A checkpoint is shown between every phase and between every parent task during i
 At each checkpoint, you can **edit the artifact directly** (the PRD, task list, etc.) before confirming. The next phase always re-reads from disk, so your edits are automatically picked up.
 
 **Progress tracking:** A `progress.md` file is maintained at `.planning/[project-name]/progress.md`. It records the current phase and the paths to the active PRD and task files. This lets the orchestrator resume exactly where it left off even after a session restart, context limit, or crash — just call `/gsdl [project-name]` again.
+
+---
+
+### `gsdl-fetch-source` — Fetch from Linear / Notion / Slite
+
+Fetches project context from a remote source URL and formats it as `seed.md` content for the GSDL pipeline. Called automatically by the `gsdl` orchestrator when a URL argument is detected.
+
+**Supported sources:**
+- **Linear** — fetches issue title, description, status, priority, labels, and assignee via the Linear GraphQL API
+- **Notion** — fetches page title and content blocks via the Notion API
+- **Slite** — fetches note title and content via the Slite API
+
+**Authentication — priority order:**
+
+1. **MCP server (preferred)** — if a matching MCP server is configured in `.cursor/mcp.json` or `~/.cursor/mcp.json`, its tools are used automatically with no additional setup:
+
+   | Source | MCP server package |
+   |--------|--------------------|
+   | Linear | `@linear/mcp` |
+   | Notion | `@notionhq/notion-mcp-server` |
+   | Slite | Check Slite docs |
+
+2. **Environment variable** — fallback if no MCP is configured:
+
+   | Source | Variable | Where to generate |
+   |--------|----------|-------------------|
+   | Linear | `LINEAR_API_KEY` | [linear.app/settings/api](https://linear.app/settings/api) |
+   | Notion | `NOTION_TOKEN` | [notion.so/my-integrations](https://www.notion.so/my-integrations) |
+   | Slite | `SLITE_API_KEY` | Slite workspace settings → API |
+
+3. **WebFetch** — works for publicly shared content, no credentials needed
+4. **Manual** — paste the content directly into the chat
 
 ---
 
@@ -170,6 +210,21 @@ Trigger any skill by describing what you want in natural language in the Cursor 
 
 **Run the full pipeline on a new idea:**
 > "Let's GSD — I want to build a CLI tool that syncs local files to S3"
+
+**Start from a Linear ticket:**
+> `/gsdl linear https://linear.app/myteam/issue/ENG-123/my-feature`
+
+**Start from a Notion doc:**
+> `/gsdl notion https://www.notion.so/workspace/My-Spec-abc123def456`
+
+**Start from a Slite doc:**
+> `/gsdl slite https://myteam.slite.com/p/abc123/My-Doc-Title`
+
+**Auto-detect the source from the URL:**
+> `/gsdl https://linear.app/myteam/issue/ENG-123/my-feature`
+
+**Resume an in-progress project:**
+> `/gsdl my-project` — picks up where you left off, no questions asked
 
 **Jump straight to a specific phase:**
 > "Create a PRD for the `my-project` seed file"
