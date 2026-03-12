@@ -1,6 +1,6 @@
 ---
 name: gsdl
-description: "Get Shit Done (GSD) orchestrator. Runs the full project pipeline from idea to implementation: setup → PRD → task list → implementation. Use when the user wants to build something end-to-end, says \"let's GSD\", \"build this from scratch\", \"get shit done\", or wants to run the full development workflow. Coordinates gsdl-setup-project, gsdl-create-prd, gsdl-create-plan, and gsdl-execute-plan skills. Spawns subagents per parent task during implementation to preserve context."
+description: "Get Shit Done (GSD) orchestrator. Runs the full project pipeline from idea to implementation: setup → PRD → task list → implementation. Use when the user wants to build something end-to-end, says \"let's GSD\", \"build this from scratch\", \"get shit done\", or wants to run the full development workflow. Coordinates gsdl-setup-project, gsdl-create-prd, gsdl-create-plan, and gsdl-execute-plan skills. Spawns subagents per parent task during implementation to preserve context. Accepts an optional project name argument: /gsdl [project-name]."
 disable-model-invocation: true
 ---
 
@@ -19,26 +19,44 @@ Phase 3: Implement   → gsdl-execute-plan SKILL.md  (subagent per parent task)
 
 ---
 
-## Step 1: Detect Current Phase
+## Step 1: Resolve Project Name
 
-Before doing anything:
+1. **Check the user's message for a project name argument.** If the user typed `/gsdl my-project`, the project name is `my-project`. Use it directly — do not ask.
+2. If no project name was provided, ask: "What's the project name?"
+3. Normalize to kebab-case.
 
-1. Ask the user for the project name if not provided
-2. Check what exists in the workspace:
+---
+
+## Step 2: Detect Current Phase
+
+Read `.planning/[project-name]/progress.md` if it exists — this is the fastest way to resume.
+
+If `progress.md` exists, extract:
+- `phase` — last recorded phase (0–3 or "done")
+- `prd` — path to the active PRD file
+- `tasks` — path to the active task file
+
+Then **verify** the recorded files still exist on disk before trusting them. If a file is missing, fall back to the filesystem scan below.
+
+If `progress.md` does not exist (or a recorded file is missing), scan the filesystem:
 
 | Condition | Start at |
 |-----------|----------|
 | No `.planning/[project-name]/` folder | Phase 0 |
 | `.planning/[project-name]/seed.md` exists, no `tasks/prd-*.md` | Phase 1 |
-| `.planning/[project-name]/tasks/prd-*.md` exists, no `tasks-prd-*.md` | Phase 2 |
+| `.planning/[project-name]/tasks/prd-*.md` exists, no `tasks/tasks-prd-*.md` | Phase 2 |
 | `.planning/[project-name]/tasks/tasks-prd-*.md` exists with unchecked `[ ]` items | Phase 3 |
 | All tasks `[x]` | Done |
+
+If multiple PRD or task files exist, use the path recorded in `progress.md` (if available); otherwise ask the user which one to use.
+
+**After determining the active phase and files, write (or update) `progress.md`** — see the Progress File section below.
 
 Announce which phase you're starting from and why before proceeding.
 
 ---
 
-## Step 2: Run Each Phase
+## Step 3: Run Each Phase
 
 ## Skill Path Resolution
 
@@ -54,7 +72,7 @@ Use whichever path exists. If both exist, prefer `~/.agents/skills/`.
 
 Read and follow the `gsdl-setup-project` skill (resolve path per above).
 
-Complete the full setup (folder, `tasks/`, `seed.md`), then show the checkpoint and wait for user confirmation before continuing to Phase 1.
+Complete the full setup (folder, `tasks/`, `seed.md`), then write the initial `progress.md` (phase 0), show the checkpoint, and wait for user confirmation before continuing to Phase 1.
 
 ### Phase 1 — Create PRD (Inline)
 
@@ -62,7 +80,7 @@ Read and follow the `gsdl-create-prd` skill (resolve path per above).
 
 This phase is interactive — ask clarifying questions, iterate on the PRD with the user, then save it to `.planning/[project-name]/tasks/prd-[feature-name].md`.
 
-Show the checkpoint and wait for confirmation before Phase 2. **Before proceeding to Phase 2, re-read the PRD from disk** at its saved path — the user may have edited the file after reviewing it.
+After saving the PRD, update `progress.md` (phase 1, prd path). Show the checkpoint and wait for confirmation before Phase 2. **Before proceeding to Phase 2, re-read the PRD from disk** at its saved path — the user may have edited the file after reviewing it.
 
 ### Phase 2 — Generate Task List (Inline)
 
@@ -70,9 +88,11 @@ Read and follow the `gsdl-create-plan` skill (resolve path per above).
 
 This has two steps: show parent tasks → wait for user "Go" → generate sub-tasks and save to `.planning/[project-name]/tasks/tasks-prd-[name].md`.
 
-Show the checkpoint and wait for confirmation before Phase 3. **Before proceeding to Phase 3, re-read the task file from disk** at its saved path — the user may have edited the file (reordering, rewording, or adding tasks) after reviewing it.
+After saving the task file, update `progress.md` (phase 2, tasks path). Show the checkpoint and wait for confirmation before Phase 3. **Before proceeding to Phase 3, re-read the task file from disk** at its saved path — the user may have edited the file (reordering, rewording, or adding tasks) after reviewing it.
 
 ### Phase 3 — Implementation (Subagent per Parent Task)
+
+Update `progress.md` to phase 3 before starting.
 
 **Re-read the task file from disk** to identify all parent tasks (1.0, 2.0, 3.0, ...). Use the on-disk version as the source of truth, not any prior in-context copy.
 
@@ -106,6 +126,37 @@ When all sub-tasks under [N.0] are marked [x] and the parent is marked [x]:
 
 ---
 
+## Progress File
+
+Maintain `.planning/[project-name]/progress.md` throughout the pipeline. Write it after every phase transition and whenever the active files are first determined.
+
+### Format
+
+```markdown
+# [project-name] — GSDL Progress
+
+## State
+
+- Phase: [0 | 1 | 2 | 3 | done]
+- Last Updated: [YYYY-MM-DD]
+
+## Active Files
+
+- PRD: [relative path to active prd-*.md, or "none"]
+- Tasks: [relative path to active tasks-prd-*.md, or "none"]
+```
+
+### When to write/update
+
+| Event | Phase value | PRD | Tasks |
+|-------|-------------|-----|-------|
+| Phase 0 complete (setup done) | `1` | `none` | `none` |
+| PRD saved (Phase 1 complete) | `2` | path to PRD | `none` |
+| Task file saved (Phase 2 complete) | `3` | path to PRD | path to tasks |
+| All tasks complete | `done` | path to PRD | path to tasks |
+
+---
+
 ## Checkpoint Format
 
 Show this between every phase transition and between every parent task in Phase 3:
@@ -130,7 +181,7 @@ Type "yes" / "go" / "next" to continue, or tell me what to review or change firs
 
 If GSD is triggered on a project that already has work done:
 
-1. Run phase detection
+1. Read `progress.md` (if present) → verify files on disk → fall back to filesystem scan if needed
 2. Skip completed phases
 3. Announce: "Project '[name]' is at Phase [N]. Resuming from [description]."
 4. For Phase 3, check which parent tasks are already `[x]` and skip them
@@ -144,3 +195,4 @@ If GSD is triggered on a project that already has work done:
 3. **Each Phase 3 subagent handles exactly one parent task** — never assign two parent tasks to one subagent
 4. **Surface blockers immediately** — if a subagent reports an error or missing dependency, pause Phase 3 and resolve with the user before continuing
 5. **All files stay within the project folder** — never create files at workspace root
+6. **Keep `progress.md` current** — update it at every phase transition so `/gsdl [project-name]` always resumes cleanly

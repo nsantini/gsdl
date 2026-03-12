@@ -22,6 +22,9 @@ Runs the entire workflow end-to-end. Detects which phase a project is at and res
 
 **Trigger phrases:** "let's GSD", "build this from scratch", "get shit done", or "run the full workflow"
 
+**Pass a project name directly to resume instantly:**
+> `/gsdl my-project` — picks up where you left off, no questions asked
+
 **Pipeline:**
 ```
 Phase 0: Setup       → creates project folder and seed file
@@ -33,6 +36,8 @@ Phase 3: Implement   → one subagent per parent task, with checkpoint between e
 A checkpoint is shown between every phase and between every parent task during implementation. The pipeline never auto-advances past a checkpoint without your confirmation.
 
 At each checkpoint, you can **edit the artifact directly** (the PRD, task list, etc.) before confirming. The next phase always re-reads from disk, so your edits are automatically picked up.
+
+**Progress tracking:** A `progress.md` file is maintained at `.planning/[project-name]/progress.md`. It records the current phase and the paths to the active PRD and task files. This lets the orchestrator resume exactly where it left off even after a session restart, context limit, or crash — just call `/gsdl [project-name]` again.
 
 ---
 
@@ -112,6 +117,7 @@ workspace-root/
 ├── .planning/
 │   └── project-name/
 │       ├── seed.md
+│       ├── progress.md          ← tracks current phase + active file paths
 │       └── tasks/
 │           ├── prd-feature-name.md
 │           └── tasks-prd-feature-name.md
