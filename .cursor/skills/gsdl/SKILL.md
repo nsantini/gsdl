@@ -1,20 +1,21 @@
 ---
 name: gsdl
-description: "Get Shit Done (GSD) orchestrator. Runs the full project pipeline from idea to implementation: setup → PRD → task list → implementation. Use when the user wants to build something end-to-end, says \"let's GSD\", \"build this from scratch\", \"get shit done\", or wants to run the full development workflow. Coordinates gsdl-setup-project, gsdl-create-prd, gsdl-create-plan, and gsdl-execute-plan skills. Spawns subagents per parent task during implementation to preserve context. Accepts an optional project name or source URL: /gsdl [project-name] OR /gsdl [linear|notion|slite] [url] OR /gsdl [url]."
+description: "Get Shit Done (GSD) orchestrator. Runs the full project pipeline from idea to implementation to documentation: setup → PRD → task list → implementation → decisions doc. Use when the user wants to build something end-to-end, says \"let's GSD\", \"build this from scratch\", \"get shit done\", or wants to run the full development workflow. Coordinates gsdl-setup-project, gsdl-create-prd, gsdl-create-plan, gsdl-execute-plan, and gsdl-document-decisions skills. Spawns subagents per parent task during implementation to preserve context. Accepts an optional project name or source URL: /gsdl [project-name] OR /gsdl [linear|notion|slite] [url] OR /gsdl [url]."
 disable-model-invocation: true
 ---
 
 # GSD — Get Shit Done Orchestrator
 
-Coordinates the full project pipeline across four phases. Phases 0–2 run **inline** (interactive, in this context). Phase 3 (implementation) **spawns one subagent per parent task** to keep context fresh.
+Coordinates the full project pipeline across five phases. Phases 0–2 and Phase 4 run **inline** (interactive, in this context). Phase 3 (implementation) **spawns one subagent per parent task** to keep context fresh.
 
 ## Pipeline Overview
 
 ```
-Phase 0: Setup       → gsdl-setup-project SKILL.md (inline)
-Phase 1: PRD         → gsdl-create-prd SKILL.md    (inline, interactive Q&A)
-Phase 2: Task List   → gsdl-create-plan SKILL.md   (inline, two-phase with "Go")
-Phase 3: Implement   → gsdl-execute-plan SKILL.md  (subagent per parent task)
+Phase 0: Setup       → gsdl-setup-project SKILL.md        (inline)
+Phase 1: PRD         → gsdl-create-prd SKILL.md           (inline, interactive Q&A)
+Phase 2: Task List   → gsdl-create-plan SKILL.md          (inline, two-phase with "Go")
+Phase 3: Implement   → gsdl-execute-plan SKILL.md         (subagent per parent task)
+Phase 4: Document    → gsdl-document-decisions SKILL.md   (inline, optional publish to Slite/Notion)
 ```
 
 ---
@@ -62,7 +63,7 @@ Recognized patterns:
 Read `.planning/[project-name]/progress.md` if it exists — this is the fastest way to resume.
 
 If `progress.md` exists, extract:
-- `phase` — last recorded phase (0–3 or "done")
+- `phase` — last recorded phase (0–4 or "done")
 - `prd` — path to the active PRD file
 - `tasks` — path to the active task file
 
@@ -76,7 +77,8 @@ If `progress.md` does not exist (or a recorded file is missing), scan the filesy
 | `.planning/[project-name]/seed.md` exists, no `tasks/prd-*.md` | Phase 1 |
 | `.planning/[project-name]/tasks/prd-*.md` exists, no `tasks/tasks-prd-*.md` | Phase 2 |
 | `.planning/[project-name]/tasks/tasks-prd-*.md` exists with unchecked `[ ]` items | Phase 3 |
-| All tasks `[x]` | Done |
+| All tasks `[x]`, no `decisions-*.md` file | Phase 4 |
+| `decisions-[project-name].md` exists | Done |
 
 If multiple PRD or task files exist, use the path recorded in `progress.md` (if available); otherwise ask the user which one to use.
 
@@ -102,6 +104,7 @@ Sub-skills used by this orchestrator:
 - `gsdl-create-prd` — generates the PRD (Phase 1)
 - `gsdl-create-plan` — generates the task list (Phase 2)
 - `gsdl-execute-plan` — implements sub-tasks (Phase 3)
+- `gsdl-document-decisions` — captures decisions & architecture changes, optionally publishes to Slite or Notion (Phase 4)
 
 ---
 
@@ -166,6 +169,35 @@ When all sub-tasks under [N.0] are marked [x] and the parent is marked [x]:
 3. After the subagent returns, show the user the summary
 4. Show the checkpoint and wait for confirmation before spawning the next subagent
 
+### Phase 4 — Document Decisions (Inline)
+
+After all parent tasks are complete, update `progress.md` to phase `4`, then run this phase.
+
+Read and follow the `gsdl-document-decisions` skill (resolve path per above).
+
+Pass the following context to the skill:
+- `PROJECT_NAME`: the current project name
+- `WORKSPACE_ROOT`: the absolute path to the workspace root
+- `PRD_PATH`: the PRD path recorded in `progress.md`
+- `TASKS_PATH`: the tasks path recorded in `progress.md`
+
+The skill will:
+1. Analyze git history and the PRD/task files
+2. Generate a structured decisions document at `.planning/[project-name]/decisions-[project-name].md`
+3. Ask the user if they want to publish it to Slite or Notion
+4. Handle publishing if the user provides a parent page URL
+
+This phase runs **inline** (no subagent). After the decisions document is saved and the user has answered the publish prompt, update `progress.md` to `done`, then show the final checkpoint:
+
+```
+🎉 Project '[project-name]' is complete.
+
+Decisions document: .planning/[project-name]/decisions-[project-name].md
+[If published: Published to [Slite/Notion]: [URL]]
+
+Run /gsdl [project-name] again if you want to resume or extend this project.
+```
+
 ---
 
 ## Progress File
@@ -179,7 +211,7 @@ Maintain `.planning/[project-name]/progress.md` throughout the pipeline. Write i
 
 ## State
 
-- Phase: [0 | 1 | 2 | 3 | done]
+- Phase: [0 | 1 | 2 | 3 | 4 | done]
 - Last Updated: [YYYY-MM-DD]
 
 ## Active Files
@@ -195,7 +227,8 @@ Maintain `.planning/[project-name]/progress.md` throughout the pipeline. Write i
 | Phase 0 complete (setup done) | `1` | `none` | `none` |
 | PRD saved (Phase 1 complete) | `2` | path to PRD | `none` |
 | Task file saved (Phase 2 complete) | `3` | path to PRD | path to tasks |
-| All tasks complete | `done` | path to PRD | path to tasks |
+| All tasks complete (Phase 3 done) | `4` | path to PRD | path to tasks |
+| Decisions document saved (Phase 4 done) | `done` | path to PRD | path to tasks |
 
 ---
 
@@ -227,14 +260,16 @@ If GSD is triggered on a project that already has work done:
 2. Skip completed phases
 3. Announce: "Project '[name]' is at Phase [N]. Resuming from [description]."
 4. For Phase 3, check which parent tasks are already `[x]` and skip them
+5. For Phase 4, if `decisions-[project-name].md` already exists, report the project is done — do not re-run Phase 4
 
 ---
 
 ## Rules
 
 1. **Always show a checkpoint** between phases and between parent tasks — never chain them automatically
-2. **Phases 0–2 are inline** — do not spawn subagents for setup, PRD, or task generation
+2. **Phases 0–2 and Phase 4 are inline** — do not spawn subagents for setup, PRD, task generation, or documentation
 3. **Each Phase 3 subagent handles exactly one parent task** — never assign two parent tasks to one subagent
 4. **Surface blockers immediately** — if a subagent reports an error or missing dependency, pause Phase 3 and resolve with the user before continuing
 5. **All files stay within the project folder** — never create files at workspace root
 6. **Keep `progress.md` current** — update it at every phase transition so `/gsdl [project-name]` always resumes cleanly
+7. **Phase 4 is mandatory but publishing is optional** — always generate the decisions document; only push to Slite/Notion if the user provides a parent URL
