@@ -10,7 +10,7 @@ Guides implementation of task lists with structured completion tracking. This sk
 
 ## Project Context
 
-Task lists are located at `.planning/[project-name]/tasks/tasks-[prd-name].md`. Implementation code lives at the workspace root (not inside `.planning/`).
+Task lists are located at `.planning/[project-name]/tasks-[prd-name].md`. Implementation code lives at the workspace root (not inside `.planning/`).
 
 ## Operating Modes
 
@@ -98,7 +98,7 @@ After (when 1.3 is complete and parent is done):
 The "Relevant Files" section should be kept up to date:
 
 - List every file created or modified (implementation files at workspace root, planning files under `.planning/`)
-- Use full paths relative to workspace root (e.g., `src/file.ts` for code, `.planning/[project-name]/tasks/tasks-prd-name.md` for planning)
+- Use full paths relative to workspace root (e.g., `src/file.ts` for code, `.planning/[project-name]/tasks-prd-name.md` for planning)
 - Provide a one-line description of each file's purpose
 - Add new files as they are created during implementation
 
@@ -202,7 +202,7 @@ AI: [Proceeds to work on sub-task 1.3]
 ## File Location
 
 Task lists follow this structure:
-- **Path**: `.planning/[project-name]/tasks/tasks-[prd-name].md`
-- **Example**: `.planning/my-auth-project/tasks/tasks-prd-user-authentication.md`
+- **Path**: `.planning/[project-name]/tasks-[prd-name].md`
+- **Example**: `.planning/my-auth-project/tasks-prd-user-authentication.md`
 
 Always work within the project's directory structure.

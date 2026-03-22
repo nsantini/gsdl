@@ -13,17 +13,16 @@ Generates a detailed, step-by-step task list in Markdown format based on an exis
 Before generating a task list:
 
 1. **Project exists**: The project should have its own folder at `.planning/[project-name]/`
-2. **PRD exists**: Ensure the PRD file exists at `.planning/[project-name]/tasks/prd-[feature-name].md`
-3. **Tasks folder exists**: Confirm `.planning/[project-name]/tasks/` directory exists
+2. **PRD exists**: Ensure the PRD file exists at `.planning/[project-name]/prd-[feature-name].md`
 
 ## Output
 
 The task list will be saved as:
 
 - **Format**: Markdown (`.md`)
-- **Location**: `.planning/[project-name]/tasks/`
+- **Location**: `.planning/[project-name]/`
 - **Filename**: `tasks-[prd-file-name].md` (e.g., `tasks-prd-user-profile-editing.md`)
-- **Full Path Example**: `.planning/my-cool-project/tasks/tasks-prd-user-authentication.md`
+- **Full Path Example**: `.planning/my-cool-project/tasks-prd-user-authentication.md`
 
 ## Two-Phase Process
 
@@ -63,7 +62,7 @@ The generated task list must follow this exact format:
 
 ### Notes
 
-- Implementation file paths are relative to the workspace root (e.g., `src/components/MyComponent.tsx`). Planning files (PRDs, task lists) live under `.planning/[project-name]/tasks/`.
+- Implementation file paths are relative to the workspace root (e.g., `src/components/MyComponent.tsx`). Planning files (PRDs, task lists) live under `.planning/[project-name]/`.
 - Unit tests should typically be placed alongside the code files they are testing (e.g., `MyComponent.tsx` and `MyComponent.test.tsx` in the same directory).
 - Use `npx jest [optional/path/to/test/file]` to run tests. Running without a path executes all tests found by the Jest configuration.
 

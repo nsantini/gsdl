@@ -74,9 +74,9 @@ If `progress.md` does not exist (or a recorded file is missing), scan the filesy
 | Condition | Start at |
 |-----------|----------|
 | No `.planning/[project-name]/` folder | Phase 0 |
-| `.planning/[project-name]/seed.md` exists, no `tasks/prd-*.md` | Phase 1 |
-| `.planning/[project-name]/tasks/prd-*.md` exists, no `tasks/tasks-prd-*.md` | Phase 2 |
-| `.planning/[project-name]/tasks/tasks-prd-*.md` exists with unchecked `[ ]` items | Phase 3 |
+| `.planning/[project-name]/seed.md` exists, no `prd-*.md` | Phase 1 |
+| `.planning/[project-name]/prd-*.md` exists, no `tasks-prd-*.md` | Phase 2 |
+| `.planning/[project-name]/tasks-prd-*.md` exists with unchecked `[ ]` items | Phase 3 |
 | All tasks `[x]`, no `decisions-*.md` file | Phase 4 |
 | `decisions-[project-name].md` exists | Done |
 
@@ -112,7 +112,7 @@ Sub-skills used by this orchestrator:
 
 Read and follow the `gsdl-setup-project` skill (resolve path per above).
 
-Complete the full setup (folder, `tasks/`, `seed.md`):
+Complete the full setup (folder, `seed.md`):
 
 - **If seed content was pre-fetched in Step 0**: Write the fetched seed content directly to `seed.md` instead of asking the user to describe their idea. Show the user what was written and let them know they can edit `seed.md` before continuing.
 - **If no pre-fetched content**: Follow the normal `gsdl-setup-project` flow (prompt the user to describe their idea, populate `seed.md` collaboratively).
@@ -123,7 +123,7 @@ Then write the initial `progress.md` (phase 0), show the checkpoint, and wait fo
 
 Read and follow the `gsdl-create-prd` skill (resolve path per above).
 
-This phase is interactive — ask clarifying questions, iterate on the PRD with the user, then save it to `.planning/[project-name]/tasks/prd-[feature-name].md`.
+This phase is interactive — ask clarifying questions, iterate on the PRD with the user, then save it to `.planning/[project-name]/prd-[feature-name].md`.
 
 After saving the PRD, update `progress.md` (phase 1, prd path). Show the checkpoint and wait for confirmation before Phase 2. **Before proceeding to Phase 2, re-read the PRD from disk** at its saved path — the user may have edited the file after reviewing it.
 
@@ -131,7 +131,7 @@ After saving the PRD, update `progress.md` (phase 1, prd path). Show the checkpo
 
 Read and follow the `gsdl-create-plan` skill (resolve path per above).
 
-This has two steps: show parent tasks → wait for user "Go" → generate sub-tasks and save to `.planning/[project-name]/tasks/tasks-prd-[name].md`.
+This has two steps: show parent tasks → wait for user "Go" → generate sub-tasks and save to `.planning/[project-name]/tasks-prd-[name].md`.
 
 After saving the task file, update `progress.md` (phase 2, tasks path). Show the checkpoint and wait for confirmation before Phase 3. **Before proceeding to Phase 3, re-read the task file from disk** at its saved path — the user may have edited the file (reordering, rewording, or adding tasks) after reviewing it.
 
@@ -157,7 +157,7 @@ continue to the next sub-task without waiting.
 Project context:
 - Project name: [project-name]
 - Workspace root: [absolute path to workspace root]
-- Task file: [absolute path to .planning/[project-name]/tasks/tasks-prd-*.md]
+- Task file: [absolute path to .planning/[project-name]/tasks-prd-*.md]
 - Assigned parent task: [N.0] [Parent Task Title]
 - Sub-tasks to complete: [N.1] [title], [N.2] [title], ... (list all)
 

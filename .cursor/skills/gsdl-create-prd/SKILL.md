@@ -13,8 +13,7 @@ Generates a detailed Product Requirements Document (PRD) in Markdown format, bas
 Before creating a PRD, verify:
 
 1. **Project exists**: The project should have its own folder at `.planning/[project-name]/`
-2. **Tasks folder exists**: Ensure `.planning/[project-name]/tasks/` directory exists (create if missing)
-3. **Seed file exists**: Check for `.planning/[project-name]/seed.md` containing the initial idea or concept
+2. **Seed file exists**: Check for `.planning/[project-name]/seed.md` containing the initial idea or concept
 
 If the project structure doesn't exist, create it first following the project-setup conventions.
 
@@ -103,7 +102,7 @@ List remaining questions or areas needing clarification.
 ### Step 4: Save the PRD
 
 1. Generate filename: `prd-[feature-name].md` (kebab-case)
-2. Save to: `.planning/[project-name]/tasks/prd-[feature-name].md`
+2. Save to: `.planning/[project-name]/prd-[feature-name].md`
 3. Confirm creation with the user, showing the file path
 
 ## Target Audience
@@ -144,6 +143,6 @@ The PRD reader is a **junior developer**. Requirements should be:
 ## Output
 
 - **Format:** Markdown (`.md`)
-- **Location:** `.planning/[project-name]/tasks/`
+- **Location:** `.planning/[project-name]/`
 - **Filename:** `prd-[feature-name].md`
-- **Example:** `.planning/my-project/tasks/prd-user-authentication.md`
+- **Example:** `.planning/my-project/prd-user-authentication.md`

@@ -30,7 +30,7 @@ Create a simple command-line task manager.
 - Yes, due dates would be helpful
 - No preference, keep it simple
 
-**Resulting PRD** (`task-manager/tasks/prd-task-manager-cli.md`):
+**Resulting PRD** (`task-manager/prd-task-manager-cli.md`):
 
 ```markdown
 # Task Manager CLI - Product Requirements Document
@@ -123,7 +123,7 @@ Users can't update their profile or preferences in the app.
 - Password change should require current password
 - Yes, using existing Tailwind component library
 
-**Resulting PRD** (`saas-app/tasks/prd-user-settings-page.md`):
+**Resulting PRD** (`saas-app/prd-user-settings-page.md`):
 
 ```markdown
 # User Settings Page - Product Requirements Document

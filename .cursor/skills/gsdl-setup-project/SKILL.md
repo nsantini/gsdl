@@ -1,6 +1,6 @@
 ---
 name: gsdl-setup-project
-description: Set up new project structure with tasks directory and seed file for research workspace. Use when the user wants to start a new project, create a project structure, initialize a new idea, or mentions starting something new.
+description: Set up new project structure with seed file for research workspace. Use when the user wants to start a new project, create a project structure, initialize a new idea, or mentions starting something new.
 disable-model-invocation: true
 ---
 
@@ -17,9 +17,8 @@ Ensure every new idea, prototype, or tool is organized into its own dedicated fo
 Every new project must include:
 
 1. **Isolated Project Folder**: Dedicated directory under `.planning/` (e.g., `.planning/project-name/`)
-2. **Tasks Directory**: For PRDs and task lists at `.planning/project-name/tasks/`
-3. **Seed File**: Initial idea capture at `.planning/project-name/seed.md`
-4. **Containment**: All planning files stay within `.planning/[project-name]/`
+2. **Seed File**: Initial idea capture at `.planning/project-name/seed.md`
+3. **Containment**: All planning files (seed, PRDs, task lists, decisions) stay within `.planning/[project-name]/`
 
 ## Setup Workflow
 
@@ -35,7 +34,7 @@ Choose a short, descriptive name:
 Create the project folders:
 
 ```bash
-mkdir -p .planning/[project-name]/tasks
+mkdir -p .planning/[project-name]
 ```
 
 ### Step 3: Create Seed File
@@ -99,9 +98,7 @@ After setup, the project should look like:
 workspace-root/
 ├── .planning/
 │   └── project-name/
-│       ├── seed.md           # Initial idea capture
-│       └── tasks/            # PRDs and task lists
-│           └── (empty initially)
+│       └── seed.md           # Initial idea capture
 └── (source code files live at workspace root, not in .planning/)
 ```
 
@@ -112,9 +109,8 @@ workspace-root/
 ├── .planning/
 │   └── project-name/
 │       ├── seed.md
-│       └── tasks/
-│           ├── prd-feature-name.md
-│           └── tasks-prd-feature-name.md
+│       ├── prd-feature-name.md
+│       └── tasks-prd-feature-name.md
 ├── src/
 │   └── (implementation files)
 ├── tests/
@@ -133,7 +129,7 @@ After setting up a project, guide the user through the workflow:
 
 ## Important Rules
 
-1. **Containment**: All planning files (seed, PRDs, task lists) must stay within `.planning/[project-name]/`
+1. **Containment**: All planning files (seed, PRDs, task lists, decisions) must stay within `.planning/[project-name]/`
 2. **Implementation code lives at workspace root**: Source files, tests, and README go at the repo root — not inside `.planning/`
 3. **Consistent naming**: Use kebab-case for project names
 4. **Seed first**: Always create seed.md before PRD
@@ -147,7 +143,6 @@ AI: "I'll set up a new project structure for user authentication.
 
 Created:
 - .planning/user-authentication/
-- .planning/user-authentication/tasks/
 - .planning/user-authentication/seed.md
 
 The seed file is ready for you to document your initial ideas. Once you've added your thoughts to the seed file, I can help you create a PRD using the gsdl-create-prd skill.
@@ -160,7 +155,7 @@ Would you like me to help you populate the seed file now, or would you prefer to
 ### Project Already Exists
 
 If a project folder already exists:
-1. Check if it has the required structure (tasks/, seed.md)
+1. Check if it has the required structure (seed.md)
 2. Add missing components without overwriting existing files
 3. Inform the user what was added
 
@@ -181,9 +176,9 @@ If the user wants to set up multiple projects:
 ## File Path Standards
 
 Always use full paths relative to workspace root:
-- **Correct**: `.planning/[project-name]/tasks/prd-feature.md`
+- **Correct**: `.planning/[project-name]/prd-feature.md`
 - **Correct**: `src/components/Auth.tsx` (implementation code lives at workspace root, not in `.planning/`)
-- **Incorrect**: `[project-name]/tasks/prd-feature.md` (missing `.planning/` prefix)
+- **Incorrect**: `[project-name]/prd-feature.md` (missing `.planning/` prefix)
 - **Incorrect**: `./src/Auth.tsx` (relative path)
 
 ## Next Steps After Setup
@@ -200,7 +195,7 @@ After creating the project structure, typically:
 For quick reference, the complete setup:
 
 ```bash
-mkdir -p .planning/[project-name]/tasks
+mkdir -p .planning/[project-name]
 touch .planning/[project-name]/seed.md
 ```
 
