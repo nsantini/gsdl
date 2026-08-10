@@ -1,15 +1,19 @@
-# Create PRD Examples
+# Create SPEC.md Examples
 
-## Example 1: CLI Tool PRD
+## Example 1: CLI Tool (started from a plain idea, no tracker)
 
-**Seed File** (`task-manager/seed.md`):
+**Seed File** (`task-manager/seed.md`, written by `gsdl-fetch-source` Method D):
 ```markdown
-# Task Manager CLI - Seed
+# Task Manager CLI
+
+## Source
+- **Source**: local idea, captured 2025-03-14
+- **Tracker item**: none
 
 ## Initial Idea
 Create a simple command-line task manager.
 
-## Rough Features
+## Key Features / Acceptance Criteria
 - Add tasks
 - List tasks
 - Mark complete
@@ -22,6 +26,7 @@ Create a simple command-line task manager.
 3. "What priority levels would be useful? (e.g., high/medium/low, or 1-5 scale)"
 4. "Should tasks have due dates?"
 5. "Any specific CLI framework preference?"
+6. "How should this be verified — existing test suite, new tests?"
 
 **User Answers**:
 - Personal use for developers
@@ -29,11 +34,12 @@ Create a simple command-line task manager.
 - Simple high/medium/low priorities
 - Yes, due dates would be helpful
 - No preference, keep it simple
+- New unit tests for the storage layer; manual smoke test of each command
 
-**Resulting PRD** (`task-manager/prd-task-manager-cli.md`):
+**Resulting `SPEC.md`** (`task-manager/SPEC.md`):
 
 ```markdown
-# Task Manager CLI - Product Requirements Document
+# Task Manager CLI — SPEC
 
 ## 1. Introduction/Overview
 A lightweight command-line task manager for developers to quickly track personal todos without leaving the terminal. Stores tasks locally in JSON format for simplicity and portability.
@@ -82,28 +88,46 @@ CLI commands should follow common conventions:
 - JSON storage for human-readable data
 - Consider using a CLI parsing library for better argument handling
 
-## 8. Success Metrics
+## 8. Verification Plan
+- New unit tests for the JSON storage layer (add/list/complete/delete round-trip)
+- Manual smoke test of each command after implementation
+- Existing `npm test` / lint gates must stay green
+
+## 9. Success Metrics
 - User can add, list, complete, and delete tasks in under 2 seconds each
 - Data persists correctly across terminal sessions
 - Zero learning curve for basic operations
 
-## 9. Open Questions
+## 10. Open Questions
 - [ ] Should completed tasks be archived or deleted after a period?
 - [ ] Should there be a `task edit` command for modifying existing tasks?
 ```
 
+With `Tracker → provider: none`, Step 4 turns this spec into slices in `tasks.md` only — no
+sub-items are created anywhere, and the pipeline is otherwise identical.
+
 ---
 
-## Example 2: Web Feature PRD
+## Example 2: Web Feature (started from a Jira issue)
 
-**Seed File** (`saas-app/seed.md`):
+**Seed File** (`proj-118-user-settings/seed.md`, populated by `gsdl-fetch-source`):
 ```markdown
-# User Settings Page - Seed
+# User Settings Page
 
-## Problem
+## Source
+- **Tracker**: jira
+- **Item**: PROJ-118 — https://myteam.atlassian.net/browse/PROJ-118
+- **Status**: In Progress
+- **Priority**: Medium
+- **Assignee**: Nico
+- **Labels**: frontend
+- **Project/Team**: PROJ (10004)
+- **Suggested branch**: none — derive from the project name
+
+## Initial Idea
 Users can't update their profile or preferences in the app.
 
-## Ideas
+## Key Features / Acceptance Criteria
 - Profile editing (name, avatar)
 - Email preferences
 - Theme selection (dark/light)
@@ -115,6 +139,7 @@ Users can't update their profile or preferences in the app.
 3. "Are there other theme options beyond dark/light?"
 4. "Should changes require email confirmation or password verification?"
 5. "Any existing design system or components to use?"
+6. "How should this be verified before closing the issue?"
 
 **User Answers**:
 - Name, avatar, and optional bio
@@ -122,11 +147,12 @@ Users can't update their profile or preferences in the app.
 - Just dark and light for now
 - Password change should require current password
 - Yes, using existing Tailwind component library
+- Existing Jest + Playwright suites must pass; add new tests for the password-change flow
 
-**Resulting PRD** (`saas-app/prd-user-settings-page.md`):
+**Resulting `SPEC.md`** (`proj-118-user-settings/SPEC.md`):
 
 ```markdown
-# User Settings Page - Product Requirements Document
+# User Settings Page — SPEC
 
 ## 1. Introduction/Overview
 A centralized settings page where users can manage their profile information, email preferences, and display theme. This improves user autonomy and reduces support requests for profile changes.
@@ -175,12 +201,17 @@ A centralized settings page where users can manage their profile information, em
 - Email preferences update via existing notification service API
 - Password change uses existing auth module
 
-## 8. Success Metrics
+## 8. Verification Plan
+- Existing Jest unit suite and Playwright e2e suite must pass (`npm test`, `npm run e2e`)
+- New unit tests for the password-change validation path
+- Manual check: theme toggle persists across reload
+
+## 9. Success Metrics
 - 50% reduction in "change my profile" support tickets
 - 80% of users who visit settings complete at least one update
 - Theme preference used by 30% of users within first month
 
-## 9. Open Questions
+## 10. Open Questions
 - [ ] Should avatar have cropping tool or accept as-is?
 - [ ] Should bio support markdown formatting?
 ```
@@ -193,15 +224,16 @@ A centralized settings page where users can manage their profile information, em
 
 **Agent Response**:
 
-"I'd like to create a PRD for your customer management feature. To make sure I capture the right requirements, I have a few questions:
+"I'd like to produce SPEC.md for your customer management feature. To make sure I capture the right requirements, I have a few questions:
 
 1. **What's the main problem you're solving?** (e.g., tracking customer info, managing sales pipeline, handling support)
 2. **Who will use this?** (e.g., sales team, support agents, account managers)
 3. **What information do you need to track per customer?** (e.g., contact info, purchase history, notes)
 4. **Is this standalone or part of an existing app?**
 5. **Any existing tools you're replacing or integrating with?**
+6. **How will this be verified once built?**
 
-Once I understand these, I'll create a seed file and then generate a detailed PRD for you."
+Once I understand these, I'll produce SPEC.md from your seed file."
 
 ---
 
@@ -213,6 +245,7 @@ Once I understand these, I'll create a seed file and then generate a detailed PR
 - Authentication/authorization requirements?
 - Rate limiting or performance considerations?
 - Error handling expectations?
+- What existing test/lint/build gates must stay green?
 
 ### Frontend/UI Feature
 - What pages/components are needed?
@@ -220,6 +253,7 @@ Once I understand these, I'll create a seed file and then generate a detailed PR
 - Responsive design requirements?
 - Accessibility considerations?
 - Loading/error states?
+- Any visual regression or e2e gate to satisfy?
 
 ### Integration Feature
 - What external services are involved?
@@ -227,6 +261,7 @@ Once I understand these, I'll create a seed file and then generate a detailed PR
 - How should failures be handled?
 - Real-time or batch processing?
 - Security/credential management?
+- How will the integration be verified (mocked tests vs. sandbox account)?
 
 ### CLI Tool
 - What commands are needed?
@@ -234,3 +269,4 @@ Once I understand these, I'll create a seed file and then generate a detailed PR
 - Output format (text, JSON, table)?
 - Configuration file support?
 - Installation/distribution method?
+- What test coverage is expected before shipping?
