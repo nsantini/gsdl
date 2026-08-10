@@ -275,24 +275,25 @@ skills/
 
 ```bash
 # Project-level (committed with your repo, shared with your team)
-npx skills@1.4.0 add nsantini/gsdl -a cursor
+npx skills@1.4.0 add nsantini/gsdl
 
 # Global (available across all your projects)
-npx skills@1.4.0 add nsantini/gsdl -a cursor -g
+npx skills@1.4.0 add nsantini/gsdl -g
 ```
 
-Swap `-a cursor` for `-a claude` (or whichever agent tool you use) — the skills aren't Cursor-specific.
+The CLI detects which agent tools you have and installs to the right place. Pass `-a <agent>` to
+target one explicitly when you have several.
 
-nb: pinned to `skills@1.4.0` until a symlink bug for Cursor installs is fixed upstream.
+nb: pinned to `skills@1.4.0` until a symlink bug in Cursor installs is fixed upstream — drop the pin
+if you don't use Cursor.
 
 ### Option 2 — Manual copy
 
-```bash
-# Project-level, e.g. for Cursor
-cp -r skills/ /path/to/your/project/.cursor/skills/
+Copy `skills/` into wherever your agent looks for skills:
 
-# Project-level, e.g. for Claude Code
-cp -r skills/ /path/to/your/project/.claude/skills/
+```bash
+# Project-level — .cursor/skills/, .claude/skills/, or your agent's equivalent
+cp -r skills/ /path/to/your/project/.<agent>/skills/
 
 # Global
 cp -r skills/ ~/.agents/skills/
